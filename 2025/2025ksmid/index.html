@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>期中考試 頒獎｜AA 競程 × 大福媽瘋程式</title>
+    <script>
+        // 密碼保護邏輯（臨時前端保護）
+        const checkPassword = () => {
+            const correctPassword = "2025ks"; // 設置正確密碼
+            let attempts = 3; // 設置最多允許輸入次數
+
+            while (attempts > 0) {
+                const password = prompt("請輸入密碼以訪問計分板頁面：");
+
+                if (password === correctPassword) {
+                    // 密碼正確，顯示內容
+                    const el = document.getElementById("protected-content");
+                    if (el) el.style.display = "block";
+                    return;
+                } else {
+                    // 密碼錯誤
+                    attempts--;
+                    alert(`密碼錯誤！您還有 ${attempts} 次嘗試機會。`);
+                }
+            }
+
+            // 超過嘗試次數，重定向回主頁
+            alert("您已超過密碼輸入次數限制，返回主頁！");
+            window.location.href = "/"; // 更改為你的主頁路徑
+        };
+    </script>
+    <style>
+        :root {
+            --bg: #0a0f1f;
+            /* 深色底 */
+            --panel: #141b2d;
+            /* 深藍灰卡 */
+            --text: #e2e8f0;
+            /* 淺字 */
+            --muted: #94a3b8;
+            /* 次要字 */
+            --line: #1e293b;
+            /* 邊框色 */
+            --gold: #fbbf24;
+            /* 金色點綴 */
+            --accent: #38bdf8;
+            /* 藍色點綴 */
+            --accent2: #6366f1;
+            /* 紫色點綴 */
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", Segoe UI, Roboto, Helvetica, Arial;
+            background:
+                radial-gradient(1000px 600px at 20% -20%, #1e293b, transparent),
+                radial-gradient(1000px 600px at 120% 20%, #0f172a, transparent),
+                var(--bg);
+            color: var(--text)
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px
+        }
+
+        /* 頂部徽章列 */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0 20px
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 4px 15px #0005
+        }
+
+        /* 分頁 */
+        .page {
+            display: none;
+            animation: fadeIn .6s ease forwards
+        }
+
+        .page.active {
+            display: block
+        }
+
+        /* DMOJ no-JS fallback: radio 控制顯示頁面 */
+        .nav {
+            display: none;
+        }
+
+        #pv1:checked~#page1,
+        #pv2:checked~#page2,
+        #pv3:checked~#page3,
+        #pv4:checked~#page4,
+        #pv5:checked~#page5 {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* 卡片 */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 0 25px #0008, inset 0 0 8px #fff1;
+            padding: 26px;
+            margin-top: 14px
+        }
+
+        /* 標題（大小標題）*/
+        .title {
+            text-align: center;
+            margin-bottom: 20px
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: clamp(44px, 6.2vw, 72px);
+            line-height: 1.1;
+            background: linear-gradient(90deg, var(--gold), #fde68a);
+            -webkit-background-clip: text;
+            color: transparent
+        }
+
+        .title h2 {
+            margin: 10px 0 0;
+            font-size: clamp(16px, 2.6vw, 26px);
+            font-weight: 700;
+            color: var(--muted)
+        }
+
+        .title .bar {
+            width: 180px;
+            height: 5px;
+            border-radius: 999px;
+            margin: 16px auto;
+            background: linear-gradient(90deg, var(--accent), var(--accent2))
+        }
+
+        /* 清單樣式（頒獎感）*/
+        .list {
+            display: grid;
+            gap: 14px;
+            margin-top: 10px
+        }
+
+        /* 使第 5 頁的 .list 兩欄排列 */
+        #page5 .list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        @media (max-width: 768px) {
+            #page5 .list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 14px;
+            align-items: center;
+            padding: 16px 18px;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            box-shadow: 0 4px 14px #0006;
+            border: 1px solid var(--line)
+        }
+
+        .rank {
+            font-weight: 900;
+            font-size: 22px;
+            min-width: 6.5em;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #1e293b, #0f172a);
+            border: 1px solid var(--accent);
+            color: var(--accent)
+        }
+
+        .r1 .rank {
+            border-color: var(--gold);
+            color: var(--gold)
+        }
+
+        .r2 .rank {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .r3 .rank {
+            border-color: var(--accent2);
+            color: var(--accent2)
+        }
+
+        .who {
+            display: flex;
+            flex-direction: column
+        }
+
+        .who .name {
+            font-weight: 900;
+            font-size: 24px
+        }
+
+        .who .meta {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .prize {
+            font-weight: 800;
+            color: var(--gold)
+        }
+
+        .page-first .name {
+            font-size: 42px
+        }
+
+        /* 第一名頁名字更大 */
+
+        /* 右下角箭頭 + 提示（全域固定） */
+        .navdock {
+            position: fixed;
+            right: 20px;
+            bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(20, 27, 45, .75);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(6px);
+            border-radius: 14px;
+            padding: 8px 10px;
+            box-shadow: 0 10px 24px #0008
+        }
+
+        .hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .keys {
+            display: inline-flex;
+            gap: 6px
+        }
+
+        kbd {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid var(--line);
+            background: #1e293b;
+            border-radius: 6px;
+            color: var(--text);
+            font-weight: 800
+        }
+
+        .arrows {
+            display: flex;
+            gap: 8px
+        }
+
+        .arrow {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 6px 16px #0000005f;
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 18px;
+            cursor: pointer;
+            user-select: none
+        }
+    </style>
+</head>
+
+<body>
+    <div id="protected-content" style="display:none">
+        <div class="wrap">
+            <div class="topbar">
+                <div class="badge">2025</div>
+                <div class="badge">AA 競程 × 大福媽瘋程式</div>
+            </div>
+
+            <!-- no-JS fallback: radio 導頁器（DMOJ 可能禁止 script 時仍可切頁） -->
+            <input class="nav" type="radio" name="pv" id="pv1" checked>
+            <input class="nav" type="radio" name="pv" id="pv2">
+            <input class="nav" type="radio" name="pv" id="pv3">
+            <input class="nav" type="radio" name="pv" id="pv4">
+            <input class="nav" type="radio" name="pv" id="pv5">
+
+            <!-- 第 1 頁：純標題頁 -->
+            <section id="page1" class="page active">
+                <div class="title">
+                    <h1>期中考試 頒獎</h1>
+                    <h2>高雄場｜C++ 語法營隊</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card" style="text-align:center;padding:46px">
+                    <div style="font-size:20px;color:var(--muted)">稍後將揭曉本次比賽名次與首殺獎</div>
+                </div>
+            </section>
+
+            <!-- 第 2 頁：第 4–6 名（先頒這頁） -->
+            <section id="page2" class="page">
+                <div class="title">
+                    <h1>第 4–6 名</h1>
+                    <h2>高雄場｜C++ 語法營隊</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row">
+                            <div class="rank">第 4 名</div>
+                            <div class="who">
+                                <div class="name">李冠穎（Lee_Guan_Ying）</div>
+                                <div class="meta">分數：1000</div>
+                            </div>
+                            <div class="prize">1 張點數卡</div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">第 5 名</div>
+                            <div class="who">
+                                <div class="name">鍾秉叡（Bernie）</div>
+                                <div class="meta">分數：1000</div>
+                            </div>
+                            <div class="prize">1 張點數卡</div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">第 6 名</div>
+                            <div class="who">
+                                <div class="name">黃湘睿（Rex）</div>
+                                <div class="meta">分數：1000</div>
+                            </div>
+                            <div class="prize">1 張點數卡</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 3 頁：第 2–3 名 -->
+            <section id="page3" class="page">
+                <div class="title">
+                    <h1>第 2–3 名</h1>
+                    <h2>高雄場｜C++ 語法營隊</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row r2">
+                            <div class="rank">第 2 名</div>
+                            <div class="who">
+                                <div class="name">沈敬又（Remyy）</div>
+                                <div class="meta">分數：1100</div>
+                            </div>
+                            <div class="prize">2 張點數卡</div>
+                        </div>
+                        <div class="row r3">
+                            <div class="rank">第 3 名</div>
+                            <div class="who">
+                                <div class="name">徐維漢（Fainoiwetry）</div>
+                                <div class="meta">分數：1100</div>
+                            </div>
+                            <div class="prize">2 張點數卡</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 4 頁：第 1 名（大字） -->
+            <section id="page4" class="page page-first">
+                <div class="title">
+                    <h1>第 1 名</h1>
+                    <h2>高雄場｜C++ 語法營隊</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row r1">
+                            <div class="rank">第 1 名</div>
+                            <div class="who">
+                                <div class="name">陳冠穎（_Morris）</div>
+                                <div class="meta">分數：1300</div>
+                            </div>
+                            <div class="prize">3 張點數卡</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 5 頁：首殺獎 -->
+            <section id="page5" class="page">
+                <div class="title">
+                    <h1>首殺獎</h1>
+                    <h2>每人僅領一次｜含 AC 時間</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">洪祺勛（qaztgbrobert）</div>
+                                <div class="meta">笨笨的 A + B｜AC：00:41</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">李冠穎（Lee_Guan_Ying）</div>
+                                <div class="meta">數字三角形 3｜AC：00:03:26</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">徐維漢（Fainoiwetry）</div>
+                                <div class="meta">比大小｜AC：00:06:25</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">鍾秉叡（Bernie）</div>
+                                <div class="meta">上班族 - 困難版｜AC：00:19:08</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">沈敬又（Remyy）</div>
+                                <div class="meta">快樂小章魚｜AC：00:14:30</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">陳冠穎（_Morris）</div>
+                                <div class="meta">我愛偶數｜AC：00:19:47</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">黃湘睿（Rex）</div>
+                                <div class="meta">刮刮樂對獎 5｜AC：00:42:29</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺</div>
+                            <div class="who">
+                                <div class="name">曾俐葳（oli）</div>
+                                <div class="meta">東方岩山｜AC：01:17:56</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 右下角：箭頭 + 提示（全域固定顯示） -->
+        <div class="navdock">
+            <div class="hint">鍵盤翻頁 <span class="keys"><kbd>←</kbd><kbd>→</kbd> / <kbd>Space</kbd></span></div>
+            <div class="arrows">
+                <div class="arrow" id="prevBtn">◀</div>
+                <div class="arrow" id="nextBtn">▶</div>
+            </div>
+        </div>
+    </div><!-- /protected-content -->
+
+    <script>
+        let current = 1;
+        const total = 5;
+        function showPage(n) {
+            if (n < 1) n = 1; if (n > total) n = total; current = n;
+            const rv = document.getElementById('pv' + n); if (rv) rv.checked = true;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + n).classList.add('active');
+        }
+        function next() { showPage(current + 1); }
+        function prev() { showPage(current - 1); }
+
+        // 鍵盤翻頁
+        document.addEventListener('keydown', (e) => {
+            const k = e.key;
+            if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
+            if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+        });
+
+        // 右下角箭頭
+        document.getElementById('nextBtn').addEventListener('click', next);
+        document.getElementById('prevBtn').addEventListener('click', prev);
+
+        // 啟動密碼保護
+        checkPassword();
+    </script>
+</body>
+
+</html>
