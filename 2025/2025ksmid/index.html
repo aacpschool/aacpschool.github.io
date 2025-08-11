@@ -6,32 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>期中考試 頒獎｜AA 競程 × 大福媽瘋程式</title>
     <script>
-        // 密碼保護邏輯（臨時前端保護）
-        const checkPassword = () => {
-            const correctPassword = "2025ks"; // 設置正確密碼
-            let attempts = 3; // 設置最多允許輸入次數
-
-            while (attempts > 0) {
-                const password = prompt("請輸入密碼以訪問頁面：");
-
-                if (password === correctPassword) {
-                    // 密碼正確，顯示內容
-                    const el = document.getElementById("protected-content");
-                    if (el) el.style.display = "block";
-                    const u = document.getElementById('unlock');
-                    if (u) u.style.display = 'none';
-                    return;
-                } else {
-                    // 密碼錯誤
-                    attempts--;
-                    alert(`密碼錯誤！您還有 ${attempts} 次嘗試機會。`);
-                }
-            }
-
-            // 超過嘗試次數，重定向回主頁
-            alert("您已超過密碼輸入次數限制，返回主頁！");
-            window.location.href = "/"; // 更改為你的主頁路徑
-        };
+        /*        // 密碼保護邏輯（臨時前端保護）
+                const checkPassword = () => {
+                    const correctPassword = "2025ks"; // 設置正確密碼
+                let attempts = 3; // 設置最多允許輸入次數
+        
+                    while (attempts > 0) {
+                        const password = prompt("請輸入密碼以訪問頁面：");
+        
+                        if (password === correctPassword) {
+                            // 密碼正確，顯示內容
+                            const el = document.getElementById("protected-content");
+                            if (el) el.style.display = "block";
+                            const u = document.getElementById('unlock');
+                            if (u) u.style.display = 'none';
+                            return;
+                        } else {
+                            // 密碼錯誤
+                            attempts--;
+                            alert(`密碼錯誤！您還有 ${attempts} 次嘗試機會。`);
+                        }
+                    }
+        
+                    // 超過嘗試次數，重定向回主頁
+                    alert("您已超過密碼輸入次數限制，返回主頁！");
+                    window.location.href = "/"; // 更改為你的主頁路徑
+                };
+        */
     </script>
     <style>
         :root {
@@ -325,11 +326,13 @@
             此頁需要啟用 JavaScript 才能顯示內容（含密碼保護）。
         </div>
     </noscript>
+    <!--
     <button id="unlock" onclick="checkPassword()"
         style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;padding:12px 18px;border-radius:12px;border:1px solid #1e293b;background:#141b2d;color:#e2e8f0;box-shadow:0 10px 24px rgba(0,0,0,.5);cursor:pointer;">
         點此輸入密碼
     </button>
-    <div id="protected-content" style="display:none">
+    -->
+    <div id="protected-content" style="display:block">
         <div class="wrap">
             <div class="topbar">
                 <div class="badge">2025</div>
@@ -546,7 +549,7 @@
         document.getElementById('prevBtn').addEventListener('click', prev);
 
         // 啟動密碼保護
-        checkPassword();
+        // checkPassword();
     </script>
 </body>
 
