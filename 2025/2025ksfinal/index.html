@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>期末考試 頒獎｜AA 競程 × 大福媽瘋程式</title>
+    <script>
+        /*        // 密碼保護邏輯（臨時前端保護）
+                const checkPassword = () => {
+                    const correctPassword = "2025ks"; // 設置正確密碼
+                let attempts = 3; // 設置最多允許輸入次數
+        
+                    while (attempts > 0) {
+                        const password = prompt("請輸入密碼以訪問頁面：");
+        
+                        if (password === correctPassword) {
+                            // 密碼正確，顯示內容
+                            const el = document.getElementById("protected-content");
+                            if (el) el.style.display = "block";
+                            const u = document.getElementById('unlock');
+                            if (u) u.style.display = 'none';
+                            return;
+                        } else {
+                            // 密碼錯誤
+                            attempts--;
+                            alert(`密碼錯誤！您還有 ${attempts} 次嘗試機會。`);
+                        }
+                    }
+        
+                    // 超過嘗試次數，重定向回主頁
+                    alert("您已超過密碼輸入次數限制，返回主頁！");
+                    window.location.href = "/"; // 更改為你的主頁路徑
+                };
+        */
+    </script>
+    <style>
+        :root {
+            --bg: #0a0f1f;
+            /* 深色底 */
+            --panel: #141b2d;
+            /* 深藍灰卡 */
+            --text: #e2e8f0;
+            /* 淺字 */
+            --muted: #94a3b8;
+            /* 次要字 */
+            --line: #1e293b;
+            /* 邊框色 */
+            --gold: #fbbf24;
+            /* 金色點綴 */
+            --accent: #38bdf8;
+            /* 藍色點綴 */
+            --accent2: #6366f1;
+            /* 紫色點綴 */
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", Segoe UI, Roboto, Helvetica, Arial;
+            background:
+                radial-gradient(1000px 600px at 20% -20%, #1e293b, transparent),
+                radial-gradient(1000px 600px at 120% 20%, #0f172a, transparent),
+                var(--bg);
+            color: var(--text)
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px
+        }
+
+        /* 頂部徽章列 */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0 20px
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 4px 15px #0005
+        }
+
+        /* 分頁 */
+        .page {
+            display: none;
+            animation: fadeIn .6s ease forwards
+        }
+
+        .page.active {
+            display: block
+        }
+
+        /* DMOJ no-JS fallback: radio 控制顯示頁面 */
+        .nav {
+            display: none;
+        }
+
+        #pv1:checked~#page1,
+        #pv2:checked~#page2,
+        #pv3:checked~#page3,
+        #pv4:checked~#page4,
+        #pv5:checked~#page5,
+        #pv6:checked~#page6 {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* 卡片 */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 0 25px #0008, inset 0 0 8px #fff1;
+            padding: 26px;
+            margin-top: 14px
+        }
+
+        /* 標題（大小標題）*/
+        .title {
+            text-align: center;
+            margin-bottom: 20px
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: clamp(44px, 6.2vw, 72px);
+            line-height: 1.1;
+            background: linear-gradient(90deg, var(--gold), #fde68a);
+            -webkit-background-clip: text;
+            color: transparent
+        }
+
+        .title h2 {
+            margin: 10px 0 0;
+            font-size: clamp(16px, 2.6vw, 26px);
+            font-weight: 700;
+            color: var(--muted)
+        }
+
+        .title .bar {
+            width: 180px;
+            height: 5px;
+            border-radius: 999px;
+            margin: 16px auto;
+            background: linear-gradient(90deg, var(--accent), var(--accent2))
+        }
+
+        /* 清單樣式（頒獎感）*/
+        .list {
+            display: grid;
+            gap: 14px;
+            margin-top: 10px
+        }
+
+        /* 使第 5 頁的 .list 兩欄排列 */
+        #page5 .list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(520px, 1fr));
+            gap: 14px;
+        }
+
+        @media (max-width: 768px) {
+            #page5 .list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 14px;
+            align-items: center;
+            padding: 16px 18px;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            box-shadow: 0 4px 14px #0006;
+            border: 1px solid var(--line)
+        }
+
+        .rank {
+            font-weight: 900;
+            font-size: 22px;
+            min-width: 6.5em;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #1e293b, #0f172a);
+            border: 1px solid var(--accent);
+            color: var(--accent)
+        }
+
+        .r1 .rank {
+            border-color: var(--gold);
+            color: var(--gold)
+        }
+
+        .r2 .rank {
+            border-color: var(--accent2);
+            color: var(--accent2)
+        }
+
+        .r3 .rank {
+            border-color: var(--accent2);
+            color: var(--accent2)
+        }
+
+        /* 專屬色系：T 恤（綠藍系）與 優異證書（紫金系） */
+        #page5 .row {
+            background: linear-gradient(145deg, #0b2d2a, #07211f);
+        }
+
+        #page5 .rank {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        #page6 .row {
+            background: linear-gradient(145deg, #2a1746, #130f2e);
+        }
+
+        #page6 .rank {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* 優異證書清單改為雙欄（較難、得主可能較多） */
+        #page6 .list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(520px, 1fr));
+            gap: 14px;
+        }
+
+        @media (max-width: 768px) {
+            #page6 .list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .who {
+            display: flex;
+            flex-direction: column
+        }
+
+        .who .name {
+            font-weight: 900;
+            font-size: 24px
+        }
+
+        /* 讓較長的姓名與 ID 能換行顯示 */
+        #page5 .who .name {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .who .meta {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .prize {
+            font-weight: 800;
+            color: var(--gold)
+        }
+
+        .page-first .name {
+            font-size: 42px
+        }
+
+        /* 第一名頁名字更大 */
+
+        /* 右下角箭頭 + 提示（全域固定） */
+        .navdock {
+            position: fixed;
+            right: 20px;
+            bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(20, 27, 45, .75);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(6px);
+            border-radius: 14px;
+            padding: 8px 10px;
+            box-shadow: 0 10px 24px #0008
+        }
+
+        .hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .keys {
+            display: inline-flex;
+            gap: 6px
+        }
+
+        kbd {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid var(--line);
+            background: #1e293b;
+            border-radius: 6px;
+            color: var(--text);
+            font-weight: 800
+        }
+
+        .arrows {
+            display: flex;
+            gap: 8px
+        }
+
+        .arrow {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 6px 16px #0000005f;
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 18px;
+            cursor: pointer;
+            user-select: none
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>
+        <div style="background:#fee2e2;color:#991b1b;padding:12px 16px;text-align:center;font-family:ui-sans-serif;">
+            此頁需要啟用 JavaScript 才能顯示內容（含密碼保護）。
+        </div>
+    </noscript>
+    <!--
+    <button id="unlock" onclick="checkPassword()"
+        style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;padding:12px 18px;border-radius:12px;border:1px solid #1e293b;background:#141b2d;color:#e2e8f0;box-shadow:0 10px 24px rgba(0,0,0,.5);cursor:pointer;">
+        點此輸入密碼
+    </button>
+    -->
+    <div id="protected-content" style="display:block">
+        <div class="wrap">
+            <div class="topbar">
+                <div class="badge">2025</div>
+                <div class="badge">AA 競程 × 大福媽瘋程式</div>
+            </div>
+
+            <!-- no-JS fallback: radio 導頁器（DMOJ 可能禁止 script 時仍可切頁） -->
+            <input class="nav" type="radio" name="pv" id="pv1" checked>
+            <input class="nav" type="radio" name="pv" id="pv2">
+            <input class="nav" type="radio" name="pv" id="pv3">
+            <input class="nav" type="radio" name="pv" id="pv4">
+            <input class="nav" type="radio" name="pv" id="pv5">
+            <input class="nav" type="radio" name="pv" id="pv6">
+
+            <!-- 第 1 頁：純標題頁 -->
+            <section id="page1" class="page active">
+                <div class="title">
+                    <h1>期末考試 頒獎</h1>
+                    <h2>高雄場｜C++ 語法營隊</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card" style="text-align:center;padding:46px">
+                    <div style="font-size:20px;color:var(--muted);text-align:left;max-width:760px;margin:0 auto;">
+                        <p>頒獎流程</p>
+                        <ul>
+                            <li>揭曉 <b>期末考前三名</b> 與獎勵（點數卡）。</li>
+                            <li>公布 <b>首殺獎</b> 名單（每人限領一次）。</li>
+                            <li>公布 <b>T 恤獲得者（≥70 分）</b> 與 <b>優異證書（≥80 分）</b>。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 2 頁：第 2–3 名（僅頒發第2–3名） -->
+            <section id="page2" class="page">
+                <div class="title">
+                    <h1>第 2–3 名</h1>
+                    <h2>高雄場｜C++ 語法營隊｜依期末考分數</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row r2">
+                            <div class="rank">第 2 名</div>
+                            <div class="who">
+                                <div class="name">沈敬又（Remyy）</div>
+                                <div class="meta">期末考：1000</div>
+                            </div>
+                            <div class="prize">2 張點數卡</div>
+                        </div>
+                        <div class="row r3">
+                            <div class="rank">第 3 名</div>
+                            <div class="who">
+                                <div class="name">鍾秉叡（Bernie）</div>
+                                <div class="meta">期末考：800</div>
+                            </div>
+                            <div class="prize">1 張點數卡</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 3 頁：第 1 名（期末考只發前三名） -->
+            <section id="page3" class="page">
+                <div class="title">
+                    <h1>第 1 名</h1>
+                    <h2>高雄場｜C++ 語法營隊｜依期末考分數</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row r1">
+                            <div class="rank">第 1 名</div>
+                            <div class="who">
+                                <div class="name">陳冠穎（_Morris）</div>
+                                <div class="meta">期末考：1100</div>
+                            </div>
+                            <div class="prize">3 張點數卡</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 4 頁：首殺獎 -->
+            <section id="page4" class="page">
+                <div class="title">
+                    <h1>首殺獎</h1>
+                    <h2>每人僅領一次｜含 AC 時間</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row">
+                            <div class="rank">首殺獎</div>
+                            <div class="who">
+                                <div class="name">陳冠穎（_Morris)</div>
+                                <div class="meta">迴圈測驗題｜AC 時間：00:03:05</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺獎</div>
+                            <div class="who">
+                                <div class="name">沈敬又（Remyy）</div>
+                                <div class="meta">數字平滑度｜AC 時間：00:07:12</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺獎</div>
+                            <div class="who">
+                                <div class="name">李冠穎（Lee_Guan_Ying）</div>
+                                <div class="meta">輸出 2 至 N 每個數的所有正因數｜AC 時間：00:14:18</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺獎</div>
+                            <div class="who">
+                                <div class="name">鍾秉叡（Bernie）</div>
+                                <div class="meta">陣列區間詢問 2｜AC 時間：00:25:29</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">首殺獎</div>
+                            <div class="who">
+                                <div class="name">徐維漢（Fainoiwetry）</div>
+                                <div class="meta">誰是輸家 3｜AC 時間：00:49:15</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 5 頁：T 恤獲得者（≥70 分） -->
+            <section id="page5" class="page">
+                <div class="title">
+                    <h1>AA 競程獨家設計 T 恤</h1>
+                    <h2>綜合評分 ≥ 70 分</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="list">
+                        <div class="row">
+                            <div class="rank">T 恤</div>
+                            <div class="who">
+                                <div class="name">陳冠穎（_Morris）</div>
+                                <div class="meta">綜合評分：99.6</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">T 恤</div>
+                            <div class="who">
+                                <div class="name">沈敬又（Remyy）</div>
+                                <div class="meta">綜合評分：97.3</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">T 恤</div>
+                            <div class="who">
+                                <div class="name">鍾秉叡（Bernie）</div>
+                                <div class="meta">綜合評分：94.0</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">T 恤</div>
+                            <div class="who">
+                                <div class="name">李冠穎（Lee_Guan_Ying）</div>
+                                <div class="meta">綜合評分：88.7</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">T 恤</div>
+                            <div class="who">
+                                <div class="name">徐維漢（Fainoiwetry）</div>
+                                <div class="meta">綜合評分：82.2</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">T 恤</div>
+                            <div class="who">
+                                <div class="name">洪祺勛（qaztgbrobert）</div>
+                                <div class="meta">綜合評分：75.0</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">T 恤</div>
+                            <div class="who">
+                                <div class="name">黃湘睿（Rex）</div>
+                                <div class="meta">綜合評分：73.2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第 6 頁：優秀學員證書（≥80 分） -->
+            <section id="page6" class="page">
+                <div class="title">
+                    <h1>優秀學員證書</h1>
+                    <h2>綜合評分 ≥ 80 分</h2>
+                    <div class="bar"></div>
+                </div>
+                <div class="card">
+                    <div class="meta" style="margin:-6px 0 10px;color:var(--muted);font-size:14px">
+                        ※ 我們現場頒發；電子證書將同步寄送至同學信箱。
+                    </div>
+                    <div class="list">
+                        <div class="row">
+                            <div class="rank">證書</div>
+                            <div class="who">
+                                <div class="name">陳冠穎（_Morris）</div>
+                                <div class="meta">綜合評分：99.6</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">證書</div>
+                            <div class="who">
+                                <div class="name">沈敬又（Remyy）</div>
+                                <div class="meta">綜合評分：97.3</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">證書</div>
+                            <div class="who">
+                                <div class="name">鍾秉叡（Bernie）</div>
+                                <div class="meta">綜合評分：94.0</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">證書</div>
+                            <div class="who">
+                                <div class="name">李冠穎（Lee_Guan_Ying）</div>
+                                <div class="meta">綜合評分：88.7</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="rank">證書</div>
+                            <div class="who">
+                                <div class="name">徐維漢（Fainoiwetry）</div>
+                                <div class="meta">綜合評分：82.2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- 右下角：箭頭 + 提示（全域固定顯示） -->
+        <div class="navdock">
+            <div class="hint">鍵盤翻頁 <span class="keys"><kbd>←</kbd><kbd>→</kbd> / <kbd>Space</kbd></span></div>
+            <div class="arrows">
+                <div class="arrow" id="prevBtn">◀</div>
+                <div class="arrow" id="nextBtn">▶</div>
+            </div>
+        </div>
+    </div><!-- /protected-content -->
+
+    <script>
+        let current = 1;
+        const total = 6;
+        function showPage(n) {
+            if (n < 1) n = 1; if (n > total) n = total; current = n;
+            const rv = document.getElementById('pv' + n); if (rv) rv.checked = true;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + n).classList.add('active');
+        }
+        function next() { showPage(current + 1); }
+        function prev() { showPage(current - 1); }
+
+        // 鍵盤翻頁
+        document.addEventListener('keydown', (e) => {
+            const k = e.key;
+            if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
+            if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+        });
+
+        // 右下角箭頭
+        document.getElementById('nextBtn').addEventListener('click', next);
+        document.getElementById('prevBtn').addEventListener('click', prev);
+
+        // 啟動密碼保護
+        // checkPassword();
+    </script>
+</body>
+
+</html>
